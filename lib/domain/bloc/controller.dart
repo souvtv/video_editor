@@ -59,20 +59,26 @@ class VideoEditorController extends ChangeNotifier {
   /// Video from [File].
   final File file;
 
-  /// Constructs a [VideoEditorController] that edits a video from a file.
-  ///
-  /// The [file] argument must not be null.
+  ///Allow to mix video ([VideoPlayer]) with other audio sources
+  final bool mixWithOthers;
+
+  ///Constructs a [VideoEditorController] that edits a video from a file.
   VideoEditorController.file(
     this.file, {
     Duration? maxDuration,
     TrimSliderStyle? trimStyle,
     CoverSelectionStyle? coverStyle,
     CropGridStyle? cropStyle,
-  })  : _video = VideoPlayerController.file(file),
-        _maxDuration = maxDuration ?? Duration.zero,
-        cropStyle = cropStyle ?? CropGridStyle(),
-        coverStyle = coverStyle ?? CoverSelectionStyle(),
-        trimStyle = trimStyle ?? TrimSliderStyle();
+    bool? mixWithOthers,
+  })  : _video = VideoPlayerController.file(file,
+            videoPlayerOptions: mixWithOthers != null
+                ? VideoPlayerOptions(mixWithOthers: mixWithOthers)
+                : null),
+        this._maxDuration = maxDuration ?? Duration.zero,
+        this.cropStyle = cropStyle ?? CropGridStyle(),
+        this.coverStyle = coverStyle ?? CoverSelectionStyle(),
+        this.trimStyle = trimStyle ?? TrimSliderStyle(),
+        this.mixWithOthers = mixWithOthers ?? false;
 
   int _rotation = 0;
   bool _isTrimming = false;
