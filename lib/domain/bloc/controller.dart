@@ -62,6 +62,9 @@ class VideoEditorController extends ChangeNotifier {
   ///Allow to mix video ([VideoPlayer]) with other audio sources
   final bool mixWithOthers;
 
+  ///Allow to loop video when play ends
+  final bool looping;
+
   ///Constructs a [VideoEditorController] that edits a video from a file.
   VideoEditorController.file(
     this.file, {
@@ -70,15 +73,15 @@ class VideoEditorController extends ChangeNotifier {
     CoverSelectionStyle? coverStyle,
     CropGridStyle? cropStyle,
     bool? mixWithOthers,
+    bool? looping,
   })  : _video = VideoPlayerController.file(file,
-            videoPlayerOptions: mixWithOthers != null
-                ? VideoPlayerOptions(mixWithOthers: mixWithOthers)
-                : null),
-        this._maxDuration = maxDuration ?? Duration.zero,
-        this.cropStyle = cropStyle ?? CropGridStyle(),
-        this.coverStyle = coverStyle ?? CoverSelectionStyle(),
-        this.trimStyle = trimStyle ?? TrimSliderStyle(),
-        this.mixWithOthers = mixWithOthers ?? false;
+            videoPlayerOptions: mixWithOthers != null ? VideoPlayerOptions(mixWithOthers: mixWithOthers) : null),
+        _maxDuration = maxDuration ?? Duration.zero,
+        cropStyle = cropStyle ?? CropGridStyle(),
+        coverStyle = coverStyle ?? CoverSelectionStyle(),
+        trimStyle = trimStyle ?? TrimSliderStyle(),
+        mixWithOthers = mixWithOthers ?? false,
+        looping = looping ?? false;
 
   int _rotation = 0;
   bool _isTrimming = false;
@@ -210,7 +213,7 @@ class VideoEditorController extends ChangeNotifier {
       _videoHeight = _video.value.size.height;
     });
     _video.addListener(_videoListener);
-    _video.setLooping(true);
+    _video.setLooping(looping);
 
     // if no [maxDuration] param given, maxDuration is the videoDuration
     _maxDuration = _maxDuration == Duration.zero ? videoDuration : _maxDuration;
